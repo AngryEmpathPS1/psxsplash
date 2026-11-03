@@ -1536,7 +1536,7 @@ void psxsplash::SceneManager::finishMovie(psyqo::GPU& gpu, MoviePlayer::Result r
     const MoviePlayer::Request& request = m_movie.request();
 #if defined(LOADER_CDROM)
     if (request.thenScene >= 0) {
-        m_movie.restoreDisplay();
+        m_movie.letGo();
         loadScene(gpu, request.thenScene, /*isFirstScene=*/true);
         return;
     }
@@ -1547,8 +1547,8 @@ void psxsplash::SceneManager::finishMovie(psyqo::GPU& gpu, MoviePlayer::Result r
     fireMovieComplete(request.onComplete, result == MoviePlayer::Result::ENDED     ? "ended"
                                           : result == MoviePlayer::Result::SKIPPED ? "skipped"
                                                                                    : "failed");
-    // Its last picture stays up for a movie onComplete queued; otherwise the game's display comes back.
-    if (!m_movie.pending()) m_movie.restoreDisplay();
+    // Its last picture stays up for a movie onComplete queued.
+    if (!m_movie.pending()) m_movie.letGo();
 }
 
 void psxsplash::SceneManager::fireMovieComplete(int ref, const char* result) {
